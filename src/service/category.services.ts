@@ -19,6 +19,24 @@ class CategoryService{
 
         return categories
     }
+
+
+    static postCategory = async (category: Category): Promise<Category | null> =>{
+
+        const q = 'INSERT INTO CATEGORY(category_name, image) VALUES($1, $2) RETURNING *'
+
+        const {rows} = await pool.query(q, [category.category_name, category.image])
+
+        const category_id = rows[0].category_id
+
+        if(!category_id) return null
+
+        return new Category(
+            category_id,
+            category.category_name,
+            category.image
+        )
+    }
 }
 
 
