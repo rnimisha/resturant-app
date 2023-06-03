@@ -24,6 +24,25 @@ class UserService{
 
     }
 
+    static loginUser = async(email: string): Promise<User | null> =>{
+
+        const q = 'SELECT * FROM USERS WHERE UPPER(email) = $1'
+
+        const { rows } = await pool.query(q,  [email.trim().toUpperCase()])
+
+        if(!rows[0]) return null
+
+        return new User(
+            rows[0].user_id,
+            rows[0].email,
+            rows[0].password,
+            rows[0].name,
+            rows[0].address,
+            rows[0].phone,
+            rows[0].role
+        )
+    }
+
 }
 
 export default UserService

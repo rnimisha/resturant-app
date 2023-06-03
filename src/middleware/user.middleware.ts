@@ -1,6 +1,14 @@
 import {Request, Response, NextFunction} from 'express'
 import CustomError from '../error/CustomError'
 import { checkUniquePhone, checkUniqueEmail } from '../utils/userValidation'
+import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
+
+dotenv.config()
+
+interface VerifyRequest extends Request {
+  user?: any;
+}
 
 class UserMiddleware{
 
@@ -46,6 +54,41 @@ class UserMiddleware{
             next(error)
         }
     }
+
+    static verifyToken = async (req: VerifyRequest, res: Response, next: NextFunction):Promise<void> =>{
+
+        const bearerHeader = req.headers['authorization']
+
+        const token = bearerHeader && bearerHeader.split(' ')[1]
+
+        if(!token){
+            // unauthorized
+            next(new CustomError('Token not provided', 401))
+
+        }else{
+
+
+            jwt.verify(token, `${process.env.SECRETKEY}`, (err, authData)=>{
+
+                // forbidden if invalid token
+                if(err) next(new CustomError('Invalid token', 403))
+
+                req.user = authData
+
+                next()
+            })
+        }
+
+    }
+
+    static validateAdmin = async (req: VerifyRequest, res: Response, next: NextFunction):Promise<void> =>{
+
+        if (req.user.role.toUpperCase() !== 'A') next(new CustomError('User unauthorized', 403))
+
+        next()
+
+    }
+
 }
 
 export default UserMiddleware
