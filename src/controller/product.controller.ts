@@ -65,6 +65,26 @@ class ProductController{
               next(error)
         }
     }
+
+    static deleteProduct =async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+            const id: number = Number(req.params.id)
+
+            const resp = await ProductService.deleteProduct(id)
+
+            if(resp !== 'deleted'){
+                throw new CustomError('Product does not exist', 404)
+            }
+
+            res.status(200).json({
+                success: true,
+                data: []
+            })
+        }
+        catch(error){
+            next(error)
+        }
+    }
  
 }
 

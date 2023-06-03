@@ -13,7 +13,7 @@ class ProductService{
 
     static getAllProducts = async(filter: ProductFilter): Promise<Product[] | null> =>{
 
-        let q = 'SELECT * FROM product WHERE 1 = 1'
+        let q = 'SELECT * FROM product WHERE UPPER(status) = \'A\''
 
         const queryParams = []
 
@@ -71,7 +71,7 @@ class ProductService{
 
     static getProductById = async (id : number): Promise<Product | null> =>{
 
-        const q = 'SELECT * FROM PRODUCT WHERE PRODUCT_ID = $1'
+        const q = 'SELECT * FROM PRODUCT WHERE UPPER(status)= \'A\' PRODUCT_ID = $1'
 
         const {rows} = await pool.query(q, [id])
         if(rows.length === 0)  {
@@ -107,6 +107,14 @@ class ProductService{
             product.description,
             product.category_id
         )
+    }
+
+    static deleteProduct = async(id:number): Promise<string> =>{
+
+        const q = 'UPDATE product SET status = \'I\' WHERE UPPER(status)=\'A\' AND product_id = $1 RETURNING *'
+        const {rows} = await pool.query(q, [id])
+
+        return rows[0] ? 'deleted' : 'no product'
     }
 
 }
