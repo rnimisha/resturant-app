@@ -71,7 +71,7 @@ class ProductService{
 
     static getProductById = async (id : number): Promise<Product | null> =>{
 
-        const q = 'SELECT * FROM PRODUCT WHERE UPPER(status)= \'A\' PRODUCT_ID = $1'
+        const q = 'SELECT * FROM PRODUCT WHERE UPPER(status)= \'A\' AND PRODUCT_ID = $1'
 
         const {rows} = await pool.query(q, [id])
         if(rows.length === 0)  {
