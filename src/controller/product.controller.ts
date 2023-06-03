@@ -15,9 +15,9 @@ class ProductController{
 
             if(!products)
             {
-                return next(new CustomError('Product Not Found', 404))
+                throw new CustomError('Product Not Found', 404)
             }
-             res.json({
+             res.status(200).json({
                 success: true,
                 data: products
             })
@@ -34,19 +34,37 @@ class ProductController{
             const product = await ProductService.getProductById(id)
             if(!product)
             {
-
-                return next(new CustomError('Product Not Found', 404))
+                throw new CustomError('Product Not Found', 404)
             }
-             res.json({
+             res.status(200).json({
                 success: true,
                 data: product
             })
         }
         catch(error){
-             next(new CustomError((error as Error).message, 500))
+             next(error)
         }
     }
 
+    static postProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+
+            const {name, quantity, price, description, unit, category_id} = req.body
+
+            const newProduct = new Product(0, name, quantity, price, unit, description, category_id)
+            const product = await ProductService.postProduct(newProduct)
+
+            res.status(201).json({
+                success: true,
+                data: product
+            })
+
+        }
+        catch(error)
+        {
+              next(error)
+        }
+    }
  
 }
 

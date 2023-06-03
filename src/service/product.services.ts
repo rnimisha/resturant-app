@@ -79,7 +79,8 @@ class ProductService{
         }
 
         const product: ProductType = rows[0]
-        return new Product(product.product_id,
+        return new Product(
+            product.product_id,
             product.name,
             product.quantity,
             product.price,
@@ -88,6 +89,24 @@ class ProductService{
             product.category_id
         )
     
+    }
+
+    static postProduct = async(product: Product): Promise<Product> =>{
+        
+        const q = 'INSERT INTO product(name, quantity, price, unit, description, category_id) VALUES($1, $2, $3, $4, $5, $6) RETURNING product_id'
+        
+        const {rows} = await pool.query(q, [product.name, product.quantity, product.price, product.unit, product.description, product.category_id])
+
+        const product_id: number = rows[0].product_id
+        return new Product(
+            product_id,
+            product.name,
+            product.quantity,
+            product.price,
+            product.unit,
+            product.description,
+            product.category_id
+        )
     }
 
 }
