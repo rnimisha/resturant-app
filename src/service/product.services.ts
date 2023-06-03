@@ -91,13 +91,26 @@ class ProductService{
     
     }
 
-    static postProduct = async(product: Product): Promise<Product> =>{
+    static postProduct = async(product: Product): Promise<Product | null> =>{
         
         const q = 'INSERT INTO product(name, quantity, price, unit, description, category_id) VALUES($1, $2, $3, $4, $5, $6) RETURNING product_id'
         
         const {rows} = await pool.query(q, [product.name, product.quantity, product.price, product.unit, product.description, product.category_id])
 
         const product_id: number = rows[0].product_id
+
+        if(product.images){
+            product.images.map(async (img) =>{
+                const resp = await this.uploadImage(product_id, img)
+
+                if(resp !== 'added')
+                {
+                    return null
+                }
+            })
+            
+        }
+
         return new Product(
             product_id,
             product.name,
@@ -107,6 +120,15 @@ class ProductService{
             product.description,
             product.category_id
         )
+    }
+
+    static uploadImage = async(id:number, image: string) =>{
+
+        const q = 'INSERT INTO product_image(image_name, product_id) VALUES($1, $2) RETURNING *'
+
+        const {rows} = await pool.query(q, [image, id])
+        
+        return rows[0] ? 'added' : 'no product'
     }
 
     static deleteProduct = async(id:number): Promise<string> =>{

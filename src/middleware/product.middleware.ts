@@ -5,7 +5,6 @@ class ProductMiddleWare {
     static validateProduct = async(req: Request, res: Response, next: NextFunction): Promise<void>=> {
 
         const {name, quantity, price, description, unit, category_id} = req.body
-
         if(!name ||  !quantity ||  !price || !description || !unit || !category_id)
         {
             return next(new CustomError('All fields are required', 400))
@@ -25,7 +24,7 @@ class ProductMiddleWare {
         {
             fieldError.push({
                 field: 'price',
-                description: 'Pricecannot be less than 0'
+                description: 'Price cannot be less than 0'
             })
         }
 

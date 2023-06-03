@@ -49,10 +49,23 @@ class ProductController{
     static postProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
         try{
 
+            if(!req.file)
+            {
+                throw new CustomError('Error uploading image', 400)
+            }
+
+            const image = req.file.filename
+
             const {name, quantity, price, description, unit, category_id} = req.body
 
             const newProduct = new Product(0, name, quantity, price, unit, description, category_id)
+            newProduct.setImageArray([image])
+
             const product = await ProductService.postProduct(newProduct)
+            if(product === null)
+            {
+                throw new CustomError('Image upload fail', 400)
+            }
 
             res.status(201).json({
                 success: true,
