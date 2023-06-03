@@ -64,6 +64,26 @@ class CartController{
             next(error)
         }
     }
+
+     static updateCartProduct= async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+            const cart_id = Number(req.body.cart_id)
+            const cart_prod_quantity = Number(req.body.cart_prod_quantity)
+
+            const carts = await CartService.updateCartProduct(cart_prod_quantity, cart_id)
+            
+            if(carts === null) throw new CustomError('Cannot update the cart product', 500)
+
+            res.status(200).json({
+                success: true,
+                data: carts
+            })
+        }
+        catch(error){
+
+            next(error)
+        }
+    }
 }
 
 export default CartController

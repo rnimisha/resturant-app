@@ -54,6 +54,22 @@ class CartService{
         return 'deleted'
 
     }
+
+    static updateCartProduct = async(cart_prod_quantity: number, cart_id:number): Promise<Cart | null> =>{
+
+        const q = 'UPDATE cart SET cart_prod_quantity=$1 WHERE cart_id = $2 RETURNING *'
+
+        const { rows } = await pool.query(q, [cart_prod_quantity, cart_id])
+
+        if( rows.length === 0) return null
+
+        return new Cart(
+            cart_id,
+            rows[0].product_id,
+            rows[0].cart_prod_quantity,
+            rows[0].user_id
+        )
+    }
 }
 
 export default CartService
