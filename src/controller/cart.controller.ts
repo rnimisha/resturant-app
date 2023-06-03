@@ -29,6 +29,22 @@ class CartController{
             next(error)
         }
     }
+
+    static getCartProducts= async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+            const id = Number(req.params.id)
+
+            const carts = await CartService.getCartProducts(id)
+
+            res.status(200).json({
+                success: true,
+                data: carts || []
+            })
+        }
+        catch(error){
+
+        }
+    }
 }
 
 export default CartController

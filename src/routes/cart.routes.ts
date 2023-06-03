@@ -5,5 +5,6 @@ import CartController from '../controller/cart.controller'
 const router = express.Router()
 
 router.post('/', UserMiddleware.verifyToken, CartController.addToCart)
+router.get('/:id', UserMiddleware.verifyToken, CartController.getCartProducts)
 
 export default router

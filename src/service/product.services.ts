@@ -57,14 +57,14 @@ class ProductService{
         if ( rows.length === null) return null
 
            const products: Product[] = rows.map((product: ProductType)=> new Product(
-            product.product_id,
-            product.name,
-            product.quantity,
-            product.price,
-            product.unit,
-            product.description,
-            product.category_id
-        ))
+                product.product_id,
+                product.name,
+                product.quantity,
+                product.price,
+                product.unit,
+                product.description,
+                product.category_id
+            ))
 
         return products
     }
