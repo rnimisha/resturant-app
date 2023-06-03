@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "resturantserver",
   "version": "1.0.0",
-  "description": "",
+  "description": "API for resturant app",
   "main": "index.js",
   "scripts": {
     "build": "tsc -p .",
