@@ -1,22 +1,62 @@
 import pool from "../db";
-import Product from "../model/product.model";
+import Product, {ProductType} from "../model/product.model";
 
-interface ProductType {
-    product_id: number,
-    name: string,
-    quantity: number,
-    price: number,
-    unit: string,
-    description: string,
-    category_id: number
+export interface ProductFilter {
+    name?: string,
+    quantity?: number,
+    minPrice?: number,
+    maxPrice?: number,
+    category_id?: number
 }
 
 class ProductService{
 
-    static  getAllProducts = async (): Promise<Product[]>=>{
-        const q = 'SELECT * FROM PRODUCT'
-        const {rows} = await pool.query(q)
-        const products: Product[] = rows.map((product: ProductType)=> new Product(
+    static getAllProducts = async(filter: ProductFilter): Promise<Product[] | null> =>{
+
+        let q = 'SELECT * FROM product WHERE 1 = 1'
+
+        const queryParams = []
+
+
+        //------------------filter by price-------------------------
+
+        if (filter.minPrice) {
+            q+= ` AND price >= $${queryParams.length + 1}`
+            queryParams.push(filter.minPrice)
+        }
+
+        if (filter.maxPrice) {
+            q+= ` AND price <= $${queryParams.length + 1}`
+            queryParams.push(filter.maxPrice)
+        }
+
+
+        //------------------filter by category-------------------------
+        if(filter.category_id){
+            q+= ` AND category_id = $${queryParams.length + 1}`
+            queryParams.push(filter.category_id)
+        }
+
+        //-------------filter by name of product-----------------------
+        if(filter.name?.trim()){
+            q+= ` AND UPPER(name) LIKE $${queryParams.length+1}`
+            const name: string = filter.name.trim().toUpperCase()
+            queryParams.push(`%${name}%`)
+        }
+
+        //-------------filter by quantity of product------------------
+         if(filter.quantity){
+            q+= ` AND quantity = $${queryParams.length + 1}`
+            queryParams.push(filter.quantity)
+        }
+
+       
+
+        const {rows} = await pool.query(q, queryParams)
+
+        if ( rows.length === null) return null
+
+           const products: Product[] = rows.map((product: ProductType)=> new Product(
             product.product_id,
             product.name,
             product.quantity,
@@ -49,6 +89,7 @@ class ProductService{
         )
     
     }
+
 }
 
 
