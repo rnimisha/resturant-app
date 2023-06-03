@@ -68,6 +68,16 @@ class OrderService{
 
         return newOrder
     }
+
+    static updateOrderStatus  = async(order_id: number, status: string): Promise<string | null> =>{
+
+        const q = 'UPDATE orders SET order_status = $1 WHERE order_id = $2 RETURNING *'
+
+        const {rows} = await pool.query(q, [status, order_id])
+        if(rows.length === 0) return null
+
+        return rows[0].order_status
+    }
 }
 
 export default OrderService

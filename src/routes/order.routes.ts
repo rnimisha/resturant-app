@@ -6,5 +6,6 @@ const router = express.Router()
 
 router.post('/', UserMiddleware.verifyToken, OrderController.placeOrder)
 router.get('/:id', UserMiddleware.verifyToken, OrderController.getOrderDetailsById)
+router.put('/status', UserMiddleware.verifyToken, OrderController.updateOrderStatus)
 
 export default router
