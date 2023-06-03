@@ -85,6 +85,29 @@ class ProductController{
             next(error)
         }
     }
+
+    static updateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
+         try{
+
+            const {name, quantity, price, description, unit, category_id, product_id} = req.body
+
+            const updatedProduct = new Product(product_id, name, quantity, price, unit, description, category_id)
+
+            const resp = await ProductService.updateProduct(updatedProduct)
+
+            if(resp === null){
+                throw new CustomError('Product does not exist', 400)
+            }
+            
+            res.status(200).json({
+                success: true,
+                data: resp
+            })
+        }
+        catch(error){
+            next(error)
+        }
+    }
  
 }
 

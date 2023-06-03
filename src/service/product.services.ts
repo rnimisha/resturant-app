@@ -117,6 +117,33 @@ class ProductService{
         return rows[0] ? 'deleted' : 'no product'
     }
 
+    static updateProduct = async(product: Product): Promise<Product | null> =>{
+
+        const q = 'UPDATE product SET name=$1, quantity=$2, price=$3, unit=$4, description=$5, category_id=$6 WHERE product_id = $7 RETURNING *'
+
+        const {rows} = await pool.query(q, [product.name, product.quantity, product.price, product.unit, product.description, product.category_id, product.product_id])
+
+
+        if(rows[0]){
+            const {name, quantity, price, unit, description, category_id, product_id} = rows[0]
+        
+            const updateProduct = new Product(
+                product_id,
+                name,
+                quantity,
+                price,
+                unit,
+                description,
+                category_id
+            )
+
+            return updateProduct
+        }else{
+            return null
+        }
+        
+    }
+
 }
 
 

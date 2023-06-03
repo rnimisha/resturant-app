@@ -8,6 +8,7 @@ router.get('/', ProductController.getAllProducts)
 router.get('/:id', ProductController.getProductByID)
 router.post('/', ProductMiddleWare.validateProduct , ProductController.postProduct)
 router.delete('/:id', ProductController.deleteProduct)
+router.put('/', ProductMiddleWare.validateProduct, ProductController.updateProduct)
 
 
 export default router
