@@ -20,6 +20,26 @@ class ProductController{
         }
         
     }
+
+    static getProductByID = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+            const id: number = Number(req.params.id);
+
+            const product = await ProductService.getProductById(id)
+            if(!product)
+            {
+
+                return next(new CustomError('Product Not Found', 404))
+            }
+             res.json({
+                success: true,
+                data: product
+            })
+        }
+        catch(error){
+             next(new CustomError((error as Error).message, 500))
+        }
+    }
 }
 
 export default ProductController
