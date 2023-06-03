@@ -2,6 +2,8 @@
 type Products = {
     product_id: number
     quantity: number
+    price?: number
+    name?: string
 }
 
 class Order{

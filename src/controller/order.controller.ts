@@ -35,6 +35,25 @@ class OrderController{
             next(error)
         }
     }
+
+    static getOrderDetailsById = async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+            const id = Number(req.params.id)
+
+            const orders = await OrderService.getOrderDetailsById(id)
+
+            if(orders === null) throw new CustomError('Order Not Found', 404)
+
+            res.status(200).json({
+                success: true,
+                data: orders
+            })
+
+        }
+        catch(error){
+            next(error)
+        }
+    }
 }
 
 export default OrderController
