@@ -44,6 +44,16 @@ class CartService{
 
         return carts
     }
+
+    static deleteCartProduct = async(cart_id: number, user_id: number): Promise<string>=>{
+
+        const q = 'DELETE FROM cart WHERE cart_id = $1 AND user_id = $2'
+
+        await pool.query(q, [cart_id, user_id])
+
+        return 'deleted'
+
+    }
 }
 
 export default CartService

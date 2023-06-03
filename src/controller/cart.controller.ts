@@ -45,6 +45,25 @@ class CartController{
 
         }
     }
+
+    static deleteCartProduct= async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+            const cart_id = Number(req.body.cart_id)
+            const user_id = Number(req.body.user_id)
+
+            const carts = await CartService.deleteCartProduct(cart_id, user_id)
+            
+            if(carts !== 'deleted') throw new CustomError('Cannot delete cart item', 500)
+
+            res.status(200).json({
+                success: true
+            })
+        }
+        catch(error){
+
+            next(error)
+        }
+    }
 }
 
 export default CartController
