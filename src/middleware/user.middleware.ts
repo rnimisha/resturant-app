@@ -4,6 +4,7 @@ import { checkUniquePhone, checkUniqueEmail } from '../utils/userValidation'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import xss from 'xss'
+import UserValidationSchema from '../validation/user.schema'
 dotenv.config()
 
 interface VerifyRequest extends Request {
@@ -22,36 +23,27 @@ class UserMiddleware{
             req.body.phone = xss(req.body.phone)
             req.body.role = xss(req.body.role)
 
+            const {error} = UserValidationSchema.validate(req.body, { abortEarly: false })
+
             const {email, password, name, address, phone, role}  = req.body
 
             if(!email ||  !password || !name || !address || !phone || !role){
                 return next(new CustomError('All fields are required', 404))
             }
 
-            const fieldError = []
-
-            //----------------- Check unique email----------------------
-            const email_length = await checkUniqueEmail(email)
-            if(email_length !== 0){
-                fieldError.push({
-                    field: 'email',
-                    description: 'Email is already registered'
+             if (error) {
+                const fieldError =  error.details.map((detail) => {
+                    const key = detail.context?.key || ''
+                    return {
+                        field: key,
+                        description: detail.message
+                    }
                 })
-            }
 
-            //----------------- Check unique phone----------------------
-            const phone_length = await checkUniquePhone(phone)
-            if(phone_length !== 0){
-                fieldError.push({
-                    field: 'phone',
-                    description: 'Phone is already registered'
-                })
-            }
-
-            if(fieldError.length > 0){
                 const err = new CustomError('Error in the field', 400)
                 err.setFieldError(fieldError)
                 return next(err)
+
             }
 
             next()
