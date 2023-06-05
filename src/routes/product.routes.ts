@@ -14,3 +14,5 @@ router.put('/',  UserMiddleware.verifyToken, ProductMiddleWare.validateProduct, 
 
 
 export default router
+
+
