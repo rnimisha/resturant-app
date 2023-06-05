@@ -75,7 +75,7 @@ class CartController{
             if(carts === null) throw new CustomError('Cannot update the cart product', 500)
 
             res.status(200).json({
-                success: true,
+                success: true, 
                 data: carts
             })
         }

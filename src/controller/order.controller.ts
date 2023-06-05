@@ -2,13 +2,17 @@ import { NextFunction, Request, Response } from "express"
 import Order from "../model/order.models"
 import OrderService from "../service/order.services"
 import CustomError from "../error/CustomError"
+import xss from "xss"
 
 class OrderController{
 
     static placeOrder = async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
 
         try{
-            const {user_id, payment_method, paid, products} = req.body
+            let {user_id, payment_method, paid, products} = req.body
+
+            payment_method = xss(payment_method)
+            paid = xss(paid)
 
             const newOrder = new Order(
                 0,
@@ -58,7 +62,7 @@ class OrderController{
     static updateOrderStatus =  async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
         try{
             const order_id = Number(req.body.order_id)
-            const status = req.body.status
+            const status = xss(req.body.status)
 
             const orders = await OrderService.updateOrderStatus(order_id, status)
 

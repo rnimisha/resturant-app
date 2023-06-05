@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import ProductService, { ProductFilter } from "../service/product.services"
 import Product from "../model/product.model"
 import CustomError from "../error/CustomError"
-
-
+import xss from "xss"
 class ProductController{
 
     static getAllProducts = async ( req: Request, res: Response, next: NextFunction): Promise<void> =>{
@@ -55,7 +54,11 @@ class ProductController{
 
             const image = req.file.filename
 
-            const {name, quantity, price, description, unit, category_id} = req.body
+            let {name, quantity, price, description, unit, category_id} = req.body
+
+            name = xss(name)
+            description = xss(description)
+            unit = xss(unit)
 
             const newProduct = new Product(0, name, quantity, price, unit, description, category_id)
             newProduct.setImageArray([image])
@@ -101,7 +104,10 @@ class ProductController{
     static updateProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
          try{
 
-            const {name, quantity, price, description, unit, category_id, product_id} = req.body
+            let {name, quantity, price, description, unit, category_id, product_id} = req.body
+            name = xss(name)
+            description = xss(description)
+            unit = xss(unit)
 
             const updatedProduct = new Product(product_id, name, quantity, price, unit, description, category_id)
 

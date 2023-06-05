@@ -1,10 +1,16 @@
 import {Request, Response, NextFunction} from 'express'
 import CustomError from '../error/CustomError'
 
+import xss from 'xss'
 class ProductMiddleWare {
     static validateProduct = async(req: Request, res: Response, next: NextFunction): Promise<void>=> {
 
+        req.body.name = xss(req.body.name)
+        req.body.description = xss(req.body.description)
+        req.body.unit = xss(req.body.unit)
+
         const {name, quantity, price, description, unit, category_id} = req.body
+
         if(!name ||  !quantity ||  !price || !description || !unit || !category_id)
         {
             return next(new CustomError('All fields are required', 400))

@@ -5,6 +5,7 @@ import CustomError from '../error/CustomError';
 import User from '../model/user.model';
 import UserService from '../service/user.services';
 import jwt from 'jsonwebtoken'
+import xss from 'xss';
 
 dotenv.config()
 
@@ -13,7 +14,14 @@ class UserController{
     static registerUser = async(req: Request, res: Response, next: NextFunction): Promise<void> =>{
         try{
 
-            const { email, password, name, address, phone, role} = req.body
+            let { email, password, name, address, phone, role} = req.body
+            email = xss(email)
+            password = xss(password)
+            name= xss(name)
+            address = xss(password)
+            phone = xss(phone)
+            role = xss(role)
+
             const saltRounds = 10;
 
             const hashed = await bcrypt.hash(password, saltRounds)
@@ -55,7 +63,9 @@ class UserController{
 
     static loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
-            const {email, password} = req.body
+            let {email, password} = req.body
+            email = xss(email)
+            password = xss(password)
 
             const user = await UserService.loginUser(email)
 

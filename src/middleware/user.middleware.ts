@@ -3,7 +3,7 @@ import CustomError from '../error/CustomError'
 import { checkUniquePhone, checkUniqueEmail } from '../utils/userValidation'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-
+import xss from 'xss'
 dotenv.config()
 
 interface VerifyRequest extends Request {
@@ -15,6 +15,13 @@ class UserMiddleware{
     static validateRegister = async (req: Request, res: Response, next: NextFunction):Promise<void> =>{
 
         try{
+
+            req.body.email = xss(req.body.email)
+            req.body.password = xss(req.body.password)
+            req.body.address = xss(req.body.address)
+            req.body.phone = xss(req.body.phone)
+            req.body.role = xss(req.body.role)
+
             const {email, password, name, address, phone, role}  = req.body
 
             if(!email ||  !password || !name || !address || !phone || !role){

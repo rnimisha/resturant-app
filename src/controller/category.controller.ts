@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import CategoryService from "../service/category.services"
 import CustomError from "../error/CustomError"
 import Category from "../model/category.model"
+import xss from "xss"
 
 class CategoryController{
 
@@ -34,7 +35,7 @@ class CategoryController{
             }
             
             const image = req.file.filename
-            const {category_name} = req.body
+            const category_name = xss(req.body.category_name)
 
             const newCategory = new Category(
                 0,
