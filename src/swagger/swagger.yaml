@@ -1,0 +1,125 @@
+swagger: "2.0 "
+info:
+  title: Food Ordering App API
+  version: 1.0.0
+  description: API for managing and ordering foods
+  contact:
+    email: nimisaraut@gmail.com
+  servers: 
+    -url: "http://localhost:3000/"
+    description: This is local server
+
+schemes: [http]
+host: "localhost:3000"
+basePath: /
+paths:
+  /products:
+    get:
+      summary: Get all products
+      parameters:
+        - name: minPrice
+          in: query
+          description: Minimum price to filter product
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          description: Maximum price to filter product
+          schema:
+            type: number
+        - name: category_id
+          in: query
+          description: ID of the product category to filter by
+          schema:
+            type: number
+        - name: name
+          in: query
+          description: Name of the product to filter product
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          description: Quantity of the product to filter product
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data: 
+                type: array
+                items:
+                  $ref: '#/definitions/Product'
+        '404':
+          description: Product not found
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Product Not Found
+        '500':
+          description: Internal server error
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      description: Retrieve a product based on its ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the product to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                $ref: '#/definitions/Product'
+
+        '404':
+          description: Product not found
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Product Not Found
+        '500':
+          description: Internal server error
+
+definitions:
+  Product:
+    type: object
+    properties:
+      product_id:
+        type: number
+      name:
+        type: string
+      quantity:
+        type: number
+      price:
+        type: number
+      unit:
+        type: string
+      description:
+        type: string
+      category_id:
+        type: number

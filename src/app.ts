@@ -1,5 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import cors from 'cors'
+
+import YAML from 'yamljs'
+import swaggerUi from 'swagger-ui-express'
+const swaggerDocs = YAML.load('src/swagger/swagger.yaml');
+
+
 
 import ProductRoute from './routes/product.routes'
 import CategoryRoute from './routes/category.routes'
@@ -11,6 +18,9 @@ import errorMiddleware from './middleware/error.middleware'
 const app =   express()
 
 app.use(bodyParser.json())
+app.use(cors())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 app.use('/products', ProductRoute)
 app.use('/categories', CategoryRoute )
 app.use('/auth', UserRoute)
