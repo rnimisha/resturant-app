@@ -53,3 +53,5 @@ Run the project in development mode
 Access the API documentation:
 
 `http://localhost:3000/api-docs` to access the Swagger UI documentation.
+
+![Sqagger UI](https://raw.githubusercontent.com/rnimisha/resturant-app/main/src/utils/demo/apidemo.gif)
