@@ -24,6 +24,15 @@ class UserService{
 
     }
 
+    static checkUniqueUser = async(email: string): Promise<boolean> =>{
+
+        const q = 'SELECT * FROM users where UPPER(email) = $1'
+
+        const {rows} = await pool.query(q, [email.toUpperCase()])
+
+        return rows.length === 0 ? true : false
+    }
+
     static loginUser = async(email: string): Promise<User | null> =>{
 
         const q = 'SELECT * FROM USERS WHERE UPPER(email) = $1'

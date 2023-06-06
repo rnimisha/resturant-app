@@ -74,6 +74,99 @@ describe('Auth API Test', ()=>{
             expect(response.body.data.token).toBeDefined()
 
         })
-     })
+    })
+
+
+    describe('POST /auth/register', () => { 
+
+        it('it should add user when all credentials are valid', async ()=>{
+            const userData = {
+                email: 'test@gmail.com',
+                password: 'testpass',
+                name: 'testname',
+                address: 'testaddr',
+                phone: '9829283839',
+                role: 'C'
+            }
+
+            UserService.registerUser = jest.fn().mockReturnValue(new User(
+                    1,
+                    'test@gmail.com',
+                    'testpass',
+                    'testname',
+                    'testaddr',
+                    '9829283839',
+                    'C'
+                ))
+
+            const response = await request.post('/auth/register').send(userData)
+
+            expect(response.status).toBe(200)
+            expect(response.body.data.user_id).toBe(1)
+            expect(response.body.data.token).toBeDefined()
+            expect(UserService.registerUser).toHaveBeenCalledTimes(1)
+        })
+
+
+        it('it should throw error when email is not valid', async ()=>{
+            const userData = {
+                email: 'testgmailcom',
+                password: 'testpass',
+                name: 'testname',
+                address: 'testaddr',
+                phone: '9829283839',
+                role: 'C'
+            }
+
+            UserService.registerUser = jest.fn().mockReturnValue(null)
+
+            const response = await request.post('/auth/register').send(userData)
+
+            expect(response.status).toBe(400)
+            expect(response.body.success).toBe(false)
+            expect(response.body.fieldError[0].field).toBe('email')
+        })
+
+
+        it('it should throw error when role is not C or A', async ()=>{
+            const userData = {
+                email: 'test@gmail.com',
+                password: 'testpass',
+                name: 'testname',
+                address: 'testaddr',
+                phone: '9829283839',
+                role: 'B'
+            }
+
+            UserService.registerUser = jest.fn().mockReturnValue(null)
+
+            const response = await request.post('/auth/register').send(userData)
+
+            expect(response.status).toBe(400)
+            expect(response.body.success).toBe(false)
+            expect(response.body.fieldError[0].field).toBe('role')
+        })
+
+        it('it should throw error when email is not unique', async ()=>{
+            const userData = {
+                email: 'momo@gmail.com',
+                password: 'testpass',
+                name: 'testname',
+                address: 'testaddr',
+                phone: '9829283839',
+                role: 'C'
+            }
+
+            UserService.checkUniqueUser = jest.fn().mockReturnValue(false)
+
+            const response = await request.post('/auth/register').send(userData)
+
+            expect(response.status).toBe(400)
+            expect(response.body.success).toBe(false)
+            expect(response.body.fieldError[0].field).toBe('email')
+        })
+
+
+    })
 
 })

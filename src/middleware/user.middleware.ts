@@ -28,7 +28,7 @@ class UserMiddleware{
             const {email, password, name, address, phone, role}  = req.body
 
             if(!email ||  !password || !name || !address || !phone || !role){
-                return next(new CustomError('All fields are required', 404))
+                return next(new CustomError('All fields are required', 400))
             }
 
              if (error) {

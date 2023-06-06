@@ -36,8 +36,18 @@ class UserController{
                 role
             )
 
-            const resp = await UserService.registerUser(newUser)
+            const unique = await UserService.checkUniqueUser(email)
+            if(!unique){
+                const newErr = new CustomError('Email already registered', 400)
+                newErr.setFieldError([{
+                    field: 'email',
+                    description: 'Email already registered'
+                }])
+                throw newErr
+            }
 
+
+            const resp = await UserService.registerUser(newUser)
             if(resp === null) throw new CustomError('Error registering user', 500)
 
             const token = jwt.sign({ user_id: resp.user_id, email: resp.email, role: resp.role }, `${process.env.SECRETKEY}`);
