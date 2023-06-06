@@ -223,29 +223,6 @@ paths:
                 example: true
               data:
                 $ref: '#/definitions/Product'
-        '401':
-          description: Token not provided
-          schema: 
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              msg:
-                type: string
-                example: Token not provided
-        '403':
-          description: Token does not match the pattern
-          schema: 
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              msg:
-                type: string
-                example: Invalid token
-
         '404':
           description: Product not found
           schema: 
