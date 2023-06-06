@@ -12,6 +12,11 @@ info:
 schemes: [http]
 host: "localhost:3000"
 basePath: /
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /products:
     get:
@@ -68,6 +73,134 @@ paths:
                 example: Product Not Found
         '500':
           description: Internal server error
+    post:
+      summary: Create a new product
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: name
+          in: formData
+          description: Name of the product
+          required: true
+          type: string
+          example: pizza
+        - name: quantity
+          in: formData
+          description: Quantity of the product in stock
+          required: true
+          type: integer
+          example: 100
+        - name: price
+          in: formData
+          description: Price of the product
+          required: true
+          type: number
+          example: 100
+        - name: unit
+          in: formData
+          description: Unit of the product 
+          required: true
+          type: string
+          example: small size
+        - name: description
+          in: formData
+          description: Description of the product
+          required: true
+          type: string
+        - name: category_id
+          in: formData
+          description: ID of the product category
+          required: true
+          type: integer
+        - name: image
+          in: formData
+          description: Image file of the product
+          required: true
+          type: file
+      responses:
+        '201':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                $ref: '#/definitions/Product'
+        '400':
+          description: Bad request
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Error in the field
+              fieldError:
+                type: array
+                items:
+                  $ref: '#/definitions/SingleFieldError'
+
+        '500':
+          description: Internal server error
+    put:
+      summary: Update a product
+      parameters:
+        - name: product
+          in: body
+          description: Updated product details
+          required: true
+          schema:
+            $ref: '#/definitions/Product'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                $ref: '#/definitions/Product'
+        '404':
+          description: Product with the ID not found
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Product does not exist
+        '401':
+          description: Token not provided
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Token not provided
+        '403':
+          description: Token does not match the pattern
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Invalid token
+        '500':
+          description: Internal server error
   /products/{id}:
     get:
       summary: Get a product by ID
@@ -90,6 +223,28 @@ paths:
                 example: true
               data:
                 $ref: '#/definitions/Product'
+        '401':
+          description: Token not provided
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Token not provided
+        '403':
+          description: Token does not match the pattern
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Invalid token
 
         '404':
           description: Product not found
@@ -104,6 +259,58 @@ paths:
                 example: Product Not Found
         '500':
           description: Internal server error
+    delete:
+      summary: Delete a product by product ID
+      description: Changes active status of a product based on it's ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the product to delete
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        '401':
+          description: Token not provided
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Token not provided
+        '403':
+          description: Token does not match the pattern
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Invalid token
+        '404':
+          description: Product with the ID does not exist
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: Product does not exist
 
 definitions:
   Product:
@@ -111,15 +318,31 @@ definitions:
     properties:
       product_id:
         type: number
+        example: 1
       name:
         type: string
+        example: pizza
       quantity:
         type: number
+        example: 10
       price:
         type: number
+        example: 100
       unit:
         type: string
+        example: medium
       description:
         type: string
       category_id:
         type: number
+        example: 1
+  SingleFieldError:
+    type: object
+    properties:
+      field:
+        type: string
+        example: name
+      description:
+        type: string
+        example: name is not valid
+  

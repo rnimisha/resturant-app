@@ -114,7 +114,7 @@ class ProductController{
             const resp = await ProductService.updateProduct(updatedProduct)
 
             if(resp === null){
-                throw new CustomError('Product does not exist', 400)
+                throw new CustomError('Product does not exist', 404)
             }
             
             res.status(200).json({
