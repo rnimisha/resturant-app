@@ -6,7 +6,8 @@ export interface ProductFilter {
     quantity?: number,
     minPrice?: number,
     maxPrice?: number,
-    category_id?: number
+    category_id?: number,
+    page?: number
 }
 
 class ProductService{
@@ -48,6 +49,18 @@ class ProductService{
          if(filter.quantity){
             q+= ` AND quantity = $${queryParams.length + 1}`
             queryParams.push(filter.quantity)
+        }
+
+        //-------------order by ---------------------------------
+        q+= ` ORDER BY product_id`
+
+        //-------------pagenation-----------------------------------
+        if(filter.page){
+            const itemPerPage = 9
+            const offset = (filter.page - 1) * itemPerPage;
+            q+= ` OFFSET $${queryParams.length + 1} LIMIT $${queryParams.length + 2}`
+            queryParams.push(offset)
+            queryParams.push(itemPerPage)
         }
 
        
