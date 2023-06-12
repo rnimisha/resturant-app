@@ -7,6 +7,7 @@ import UserMiddleware from '../middleware/user.middleware'
 const router: Router = express.Router()
 
 router.get('/', ProductController.getAllProducts)
+router.get('/minmaxprice', ProductController.getMinMaxPrice)
 router.get('/:id', ProductController.getProductByID)
 router.post('/', UserMiddleware.verifyToken,  upload, ProductMiddleWare.validateProduct , ProductController.postProduct)
 router.delete('/:id', UserMiddleware.verifyToken, ProductController.deleteProduct)

@@ -27,6 +27,7 @@ class ProductService{
         }
 
         if (filter.maxPrice) {
+
             q+= ` AND price <= $${queryParams.length + 1}`
             queryParams.push(filter.maxPrice)
         }
@@ -80,6 +81,16 @@ class ProductService{
             ))
 
         return products
+    }
+
+    static getMinMaxPrice = async () : Promise<number[]> =>{
+
+        const q = 'select max(price) as maxprice, min(price) as minprice from product'
+        const {rows} = await pool.query(q)
+
+        const prices = rows[0]
+
+        return [prices.minprice, prices.maxprice]
     }
 
     static getProductById = async (id : number): Promise<Product | null> =>{

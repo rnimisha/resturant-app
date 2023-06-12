@@ -44,6 +44,24 @@ class ProductController{
         }
     }
 
+    static getMinMaxPrice = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+
+            const resp = await ProductService.getMinMaxPrice()
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    minPrice : resp[0],
+                    maxPrice: resp[1]
+                }
+            })
+        }
+        catch(error){
+            next(error)
+        }
+    }
+ 
     static postProduct = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
         try{
 
