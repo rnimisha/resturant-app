@@ -7,6 +7,7 @@ export interface ProductFilter {
     minPrice?: number,
     maxPrice?: number,
     category_id?: number,
+    categories?: number[],
     page?: number
 }
 
@@ -34,9 +35,9 @@ class ProductService{
 
 
         //------------------filter by category-------------------------
-        if(filter.category_id){
-            q+= ` AND category_id = $${queryParams.length + 1}`
-            queryParams.push(filter.category_id)
+
+        if(filter.categories && filter.categories.length > 0){
+            q+= ` AND category_id IN (${filter.categories})`
         }
 
         //-------------filter by name of product-----------------------
@@ -45,6 +46,7 @@ class ProductService{
             const name: string = filter.name.trim().toUpperCase()
             queryParams.push(`%${name}%`)
         }
+
 
         //-------------filter by quantity of product------------------
          if(filter.quantity){
