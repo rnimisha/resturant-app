@@ -28,6 +28,18 @@ class CartService{
         return newCart
     }
 
+    // returns false if product does not exist
+    static checkCartProductExists = async(details: Cart) : Promise<boolean> =>{
+
+        const q = 'SELECT * FROM CART WHERE product_id = $1 AND user_id = $2'
+
+        const {rows} = await pool.query(q ,[details.product_id, details.user_id])
+
+        if(rows.length === 0) return false
+
+        return true
+    }
+
     static getCartProducts = async(user_id: number): Promise<Cart[] | null>=>{
 
         const q = 'SELECT c.product_id, cart_id, cart_prod_quantity, user_id, name, quantity, price FROM cart c JOIN product p ON c.product_id=p.product_id WHERE user_id = $1'

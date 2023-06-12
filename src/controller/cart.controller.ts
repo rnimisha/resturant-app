@@ -16,6 +16,9 @@ class CartController{
                 user_id
             )
 
+            const alreadyExists = await CartService.checkCartProductExists(newCart)
+            if(alreadyExists) throw new CustomError('Product already exists', 400)
+
             const cartProduct = await CartService.addToCart(newCart)
 
             if (cartProduct === null) throw new CustomError('Product could not be added to cart', 400)

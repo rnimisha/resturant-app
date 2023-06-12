@@ -56,7 +56,7 @@ class ProductService{
 
         //-------------pagenation-----------------------------------
         if(filter.page){
-            const itemPerPage = 9
+            const itemPerPage = 6
             const offset = (filter.page - 1) * itemPerPage;
             q+= ` OFFSET $${queryParams.length + 1} LIMIT $${queryParams.length + 2}`
             queryParams.push(offset)
