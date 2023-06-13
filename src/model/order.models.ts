@@ -1,5 +1,5 @@
 
-type Products = {
+export type Products = {
     product_id: number
     quantity: number
     price?: number
@@ -13,7 +13,7 @@ class Order{
     order_status: string 
     payment_method: string
     paid: string
-    products?: [Products]
+    products?: Products[]
 
     constructor(order_id : number, user_id: number, order_date: string , order_status: string ,payment_method: string, paid: string)
     {
@@ -25,7 +25,7 @@ class Order{
         this.paid = paid
     }
 
-    setProducts (products: [Products]){
+    setProducts (products: Products[]){
         this.products = products
     }
 }

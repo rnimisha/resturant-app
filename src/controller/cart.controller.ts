@@ -17,7 +17,7 @@ class CartController{
             )
 
             const alreadyExists = await CartService.checkCartProductExists(newCart)
-            if(alreadyExists) throw new CustomError('Product already exists', 400)
+            if(alreadyExists) throw new CustomError('Product already in cart', 400)
 
             const cartProduct = await CartService.addToCart(newCart)
 
@@ -55,6 +55,25 @@ class CartController{
             const user_id = Number(req.body.user_id)
 
             const carts = await CartService.deleteCartProduct(cart_id, user_id)
+            
+            if(carts !== 'deleted') throw new CustomError('Cannot delete cart item', 500)
+
+            res.status(200).json({
+                success: true
+            })
+        }
+        catch(error){
+
+            next(error)
+        }
+    }
+
+     static deleteAllCartProduct= async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+
+            const user_id = Number(req.body.user_id)
+
+            const carts = await CartService.deleteAllCartProduct( user_id)
             
             if(carts !== 'deleted') throw new CustomError('Cannot delete cart item', 500)
 

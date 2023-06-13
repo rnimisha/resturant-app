@@ -52,6 +52,17 @@ class UserService{
         )
     }
 
+
+    static getUserEmail = async(user_id : number): Promise<string | null> =>{
+        const q = 'SELECT * FROM USERS WHERE user_id = $1'
+
+        const { rows } = await pool.query(q,  [user_id])
+
+        if(!rows[0]) return null
+
+        return rows[0].email
+    }
+
 }
 
 export default UserService

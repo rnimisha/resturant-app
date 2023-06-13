@@ -67,6 +67,16 @@ class CartService{
 
     }
 
+    static deleteAllCartProduct = async( user_id: number): Promise<string>=>{
+
+        const q = 'DELETE FROM cart WHERE user_id = $1'
+
+        await pool.query(q, [user_id])
+
+        return 'deleted'
+
+    }
+
     static updateCartProduct = async(cart_prod_quantity: number, cart_id:number): Promise<Cart | null> =>{
 
         const q = 'UPDATE cart SET cart_prod_quantity=$1 WHERE cart_id = $2 RETURNING *'

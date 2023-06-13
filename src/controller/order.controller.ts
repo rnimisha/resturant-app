@@ -3,6 +3,8 @@ import Order from "../model/order.models"
 import OrderService from "../service/order.services"
 import CustomError from "../error/CustomError"
 import xss from "xss"
+import UserService from "../service/user.services"
+import MailService from "../service/mail.services"
 
 class OrderController{
 
@@ -18,7 +20,7 @@ class OrderController{
                 0,
                 user_id,
                 '',
-                'Received',
+                'Order Received',
                 payment_method,
                 paid
             )
@@ -26,6 +28,13 @@ class OrderController{
 
             const order_id = await OrderService.placeOrder(newOrder)
             if(order_id === null) throw new CustomError('Error not placed', 500)
+
+            const orderDetails = await OrderService.getOrderDetailsById(order_id)
+
+            const email = await UserService.getUserEmail(user_id)
+            if(email !== null && orderDetails !== null){
+                await MailService.sendOrderMail( email, orderDetails)
+            }
 
             res.status(200).json({
                 success: true,
