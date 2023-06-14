@@ -6,6 +6,8 @@ import YAML from 'yamljs'
 import swaggerUi from 'swagger-ui-express'
 const swaggerDocs = YAML.load('src/swagger/swagger.yaml');
 
+import * as paypal from './service/payment.services'
+
 
 
 import ProductRoute from './routes/product.routes'
@@ -13,6 +15,7 @@ import CategoryRoute from './routes/category.routes'
 import UserRoute from './routes/user.routes'
 import OrderRoute from './routes/order.routes'
 import CartRoute from './routes/cart.routes'
+import PaymentRoute from './routes/payment.routes'
 
 import errorMiddleware from './middleware/error.middleware'
 const app =   express()
@@ -26,6 +29,8 @@ app.use('/categories', CategoryRoute )
 app.use('/auth', UserRoute)
 app.use('/orders', OrderRoute)
 app.use('/carts', CartRoute)
+app.use('/payment', PaymentRoute)
+
 
 app.use(errorMiddleware)
 
