@@ -1,10 +1,10 @@
 import axios, { type AxiosResponse, type AxiosError } from 'axios';
 import dotenv from 'dotenv';
+import Order from '../model/order.models';
 dotenv.config();
 
 const { CLIENT_ID, APP_SECRET } = process.env;
 const base = 'https://api-m.sandbox.paypal.com';
-
 class PaymentService{
 
   static  generateAccessToken = async ()=> {
@@ -34,7 +34,7 @@ class PaymentService{
     throw new Error(response.statusText);
   }
 
-  static createOrder = async (data: any): Promise<any>=> {
+  static createOrder = async (total: number): Promise<any>=> {
       const accessToken = await this.generateAccessToken();
       const url = `${base}/v2/checkout/orders`;
 
@@ -52,7 +52,7 @@ class PaymentService{
               {
                 amount: {
                   currency_code: 'USD',
-                  value: '100.00',
+                  value: total,
                 },
               },
             ],

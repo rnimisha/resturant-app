@@ -11,11 +11,16 @@ export interface ProductFilter {
     page?: number
 }
 
+export interface ProductInfo {
+    product : Product[],
+    total: number
+}
+
 class ProductService{
 
-    static getAllProducts = async(filter: ProductFilter): Promise<Product[] | null> =>{
+    static getAllProducts = async(filter: ProductFilter): Promise<ProductInfo | null> =>{
 
-        let q = 'SELECT * FROM product WHERE UPPER(status) = \'A\''
+        let q = 'SELECT p.product_id, name, quantity, price,unit, description, category_id, status, image_name as image FROM product p JOIN product_image i ON p.product_id = i.product_id WHERE UPPER(status) = \'A\''
 
         const queryParams = []
 
@@ -55,7 +60,9 @@ class ProductService{
         }
 
         //-------------order by ---------------------------------
-        q+= ` ORDER BY product_id`
+        q+= ` ORDER BY p.product_id DESC`
+
+        const total = await this.getProductCount()
 
         //-------------pagenation-----------------------------------
         if(filter.page){
@@ -66,23 +73,31 @@ class ProductService{
             queryParams.push(itemPerPage)
         }
 
-       
-
         const {rows} = await pool.query(q, queryParams)
 
         if ( rows.length === null) return null
 
-           const products: Product[] = rows.map((product: ProductType)=> new Product(
-                product.product_id,
-                product.name,
-                product.quantity,
-                product.price,
-                product.unit,
-                product.description,
-                product.category_id
-            ))
 
-        return products
+           const products: Product[] = rows.map((product: ProductType)=> {
+                const newProduct = new Product(
+                    product.product_id,
+                    product.name,
+                    product.quantity,
+                    product.price,
+                    product.unit,
+                    product.description,
+                    product.category_id
+                )
+
+                if (product.image) newProduct.setImageArray([product.image])
+                
+                return newProduct
+           })
+
+        return {
+            product: products,
+            total
+        }
     }
 
     static getMinMaxPrice = async () : Promise<number[]> =>{
@@ -95,9 +110,16 @@ class ProductService{
         return [prices.minprice, prices.maxprice]
     }
 
+    static getProductCount = async () : Promise<number> => {
+        const q = 'SELECT COUNT(*) AS total FROM PRODUCT WHERE UPPER(status)= \'A\''
+        const {rows} = await pool.query(q)
+
+        return rows[0].total
+    }
+
     static getProductById = async (id : number): Promise<Product | null> =>{
 
-        const q = 'SELECT * FROM PRODUCT WHERE UPPER(status)= \'A\' AND PRODUCT_ID = $1'
+        const q = 'SELECT p.product_id, name, quantity, price,unit, description, category_id, status, image_name as image FROM product p JOIN product_image i ON p.product_id = i.product_id  WHERE UPPER(status)= \'A\' AND p.PRODUCT_ID = $1'
 
         const {rows} = await pool.query(q, [id])
         if(rows.length === 0)  {
@@ -105,7 +127,7 @@ class ProductService{
         }
 
         const product: ProductType = rows[0]
-        return new Product(
+        const newProduct =  new Product(
             product.product_id,
             product.name,
             product.quantity,
@@ -114,6 +136,8 @@ class ProductService{
             product.description,
             product.category_id
         )
+        product.image && newProduct.setImageArray([product.image])
+        return newProduct
     
     }
 

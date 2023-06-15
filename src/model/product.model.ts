@@ -7,6 +7,7 @@ export interface ProductType {
     description: string,
     category_id: number,
     images?: string[]
+    image?: string
 }
 class Product{
 
@@ -18,6 +19,7 @@ class Product{
     description: string
     category_id: number
     images?: string[]
+    image?: string
 
     constructor(product_id: number, name: string, quantity: number, price: number, unit: string, description: string, category_id: number){
         this.product_id = product_id

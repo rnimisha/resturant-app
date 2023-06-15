@@ -15,9 +15,11 @@ class ProductController{
             {
                 throw new CustomError('Product Not Found', 404)
             }
+
              res.status(200).json({
                 success: true,
                 data: products
+                
             })
         }
         catch(error){

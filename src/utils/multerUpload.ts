@@ -1,7 +1,7 @@
 import multer from 'multer'
 import fs from 'node:fs'
 
-const destination = './src/uploads/'
+const destination = '../resturant-client/public/uploads'
 
 if (!fs.existsSync(destination)) {
   fs.mkdirSync(destination);

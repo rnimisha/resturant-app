@@ -5,11 +5,10 @@ export type Products = {
     price?: number
     name?: string
 }
-
 class Order{
     order_id : number
     user_id: number
-    order_date: string 
+    order_date?: string 
     order_status: string 
     payment_method: string
     paid: string

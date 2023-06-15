@@ -69,6 +69,48 @@ class OrderService{
         return newOrder
     }
 
+
+    static getAllOrders = async(status: string): Promise<Order[] | null> =>{
+
+        let q = `SELECT o.order_id, o.order_date, order_status, payment_method, paid, od.quantity, price, p.product_id, name, user_id
+                    FROM orders o
+                    JOIN order_detail od
+                    ON o.order_id = od.order_id
+                    JOIN product p 
+                    ON od.product_id = p.product_id
+                    WHERE 1 = 1`
+
+        let data = []
+     
+        if(status !== 'all'){
+            q+= ' AND UPPER(order_status) = $1'
+            data.push(status.toUpperCase())
+        }
+        
+        q+= ' ORDER BY o.order_date desc'
+
+        const {rows} = await pool.query(q, data)
+
+        if(rows.length === 0) return null
+
+
+           const orders: Order[] = rows.map((orderInfo: Order)=> {
+                return new Order(
+                    orderInfo.order_id,
+                    orderInfo.user_id,
+                    orderInfo.order_date as string,
+                    orderInfo.order_status,
+                    orderInfo.payment_method,
+                    orderInfo.paid
+                )
+
+           })
+
+
+
+        return orders
+    }
+
     static updateOrderStatus  = async(order_id: number, status: string): Promise<string | null> =>{
 
         const q = 'UPDATE orders SET order_status = $1 WHERE order_id = $2 RETURNING *'

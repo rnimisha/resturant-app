@@ -42,7 +42,7 @@ class CartService{
 
     static getCartProducts = async(user_id: number): Promise<Cart[] | null>=>{
 
-        const q = 'SELECT c.product_id, cart_id, cart_prod_quantity, user_id, name, quantity, price FROM cart c JOIN product p ON c.product_id=p.product_id WHERE user_id = $1'
+        const q = 'SELECT c.product_id, cart_id, cart_prod_quantity, user_id, name, quantity, price FROM cart c JOIN product p ON c.product_id=p.product_id WHERE user_id = $1 ORDER BY name'
 
         const {rows} = await pool.query(q, [user_id])
 
