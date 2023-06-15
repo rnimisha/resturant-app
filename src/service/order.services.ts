@@ -1,6 +1,10 @@
 import pool from "../db"
 import Order from "../model/order.models"
 
+export interface AllOrderInfo {
+    orders : Order[],
+    total: number
+}
 
 class OrderService{
 
@@ -68,16 +72,26 @@ class OrderService{
 
         return newOrder
     }
+    static getOrderCount = async (status: string) : Promise<number> => {
+        let q = 'SELECT COUNT(*) AS total FROM ORDERS WHERE 1 = 1'
+
+        const data = []
+        if(status !== 'all'){
+            q+= ' AND UPPER(order_status) = $1'
+            data.push(status.toUpperCase())
+        }
 
 
-    static getAllOrders = async(status: string): Promise<Order[] | null> =>{
+        const {rows} = await pool.query(q, data)
 
-        let q = `SELECT o.order_id, o.order_date, order_status, payment_method, paid, od.quantity, price, p.product_id, name, user_id
+        return rows[0].total
+    }
+
+
+    static getAllOrders = async(status: string, page: number): Promise<AllOrderInfo | null> =>{
+
+        let q = `SELECT *
                     FROM orders o
-                    JOIN order_detail od
-                    ON o.order_id = od.order_id
-                    JOIN product p 
-                    ON od.product_id = p.product_id
                     WHERE 1 = 1`
 
         let data = []
@@ -86,29 +100,38 @@ class OrderService{
             q+= ' AND UPPER(order_status) = $1'
             data.push(status.toUpperCase())
         }
-        
+
         q+= ' ORDER BY o.order_date desc'
+
+        if(page && page !== 0){
+            const itemPerPage = 6
+            const offset = (page - 1) * itemPerPage;
+            q+= ` OFFSET $${data.length + 1} LIMIT $${data.length + 2}`
+            data.push(offset)
+            data.push(itemPerPage)
+        }
 
         const {rows} = await pool.query(q, data)
 
         if(rows.length === 0) return null
 
+        const total = await this.getOrderCount(status)
 
-           const orders: Order[] = rows.map((orderInfo: Order)=> {
-                return new Order(
-                    orderInfo.order_id,
-                    orderInfo.user_id,
-                    orderInfo.order_date as string,
-                    orderInfo.order_status,
-                    orderInfo.payment_method,
-                    orderInfo.paid
-                )
+        const orders: Order[] = rows.map((orderInfo: Order)=> {
+            return new Order(
+                orderInfo.order_id,
+                orderInfo.user_id,
+                orderInfo.order_date as string,
+                orderInfo.order_status,
+                orderInfo.payment_method,
+                orderInfo.paid
+            )
+        })
 
-           })
-
-
-
-        return orders
+        return {
+            orders,
+            total
+        }
     }
 
     static updateOrderStatus  = async(order_id: number, status: string): Promise<string | null> =>{
