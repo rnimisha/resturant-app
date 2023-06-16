@@ -25,8 +25,7 @@ class AnalyticsController{
     static getTotalOrderByMonth = async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
         try{
 
-            const year: number = Number(req.query.year) || 2023
-            const resp = await OrderAnalyticsService.getTotalOrderByMonth(year)
+            const resp = await OrderAnalyticsService.getTotalOrderByMonth()
             if (resp === null) throw new CustomError('Internal Server Error', 500)
 
             res.status(200).json({
@@ -38,6 +37,24 @@ class AnalyticsController{
             next(error)
         }
     }
+
+    static getRevenueByCategory = async( req: Request, res: Response, next: NextFunction): Promise<void> =>{
+        try{
+
+            const resp = await OrderAnalyticsService.getRevenueByCategory()
+            if (resp === null) throw new CustomError('Internal Server Error', 500)
+
+            res.status(200).json({
+                success: true,
+                data: resp
+            })
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+    
 }
 
 export default AnalyticsController

@@ -21,6 +21,7 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+
 app.use('/products', ProductRoute)
 app.use('/categories', CategoryRoute )
 app.use('/auth', UserRoute)

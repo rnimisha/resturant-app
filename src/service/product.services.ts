@@ -8,7 +8,8 @@ export interface ProductFilter {
     maxPrice?: number,
     category_id?: number,
     categories?: number[],
-    page?: number
+    page?: number,
+    order?: string
 }
 
 export interface ProductInfo {
@@ -20,7 +21,7 @@ class ProductService{
 
     static getAllProducts = async(filter: ProductFilter): Promise<ProductInfo | null> =>{
 
-        let q = 'SELECT p.product_id, name, quantity, price,unit, description, category_id, status, image_name as image FROM product p JOIN product_image i ON p.product_id = i.product_id WHERE UPPER(status) = \'A\''
+        let q = 'SELECT p.product_id, name, quantity, price, unit, description, category_id, status, image_name as image FROM product p JOIN product_image i ON p.product_id = i.product_id WHERE UPPER(status) = \'A\''
 
         const queryParams = []
 
@@ -60,8 +61,13 @@ class ProductService{
         }
 
         //-------------order by ---------------------------------
-        q+= ` ORDER BY p.product_id DESC`
+        if (filter.order && filter.order !== 'default') {
 
+            const order = filter.order === 'price' ? ' ORDER BY price' : ' ORDER BY price DESC'
+            q = q + order
+        }else{
+             q+= ` ORDER BY p.product_id DESC`
+        }
         const total = await this.getProductCount()
 
         //-------------pagenation-----------------------------------
@@ -77,21 +83,20 @@ class ProductService{
 
         if ( rows.length === null) return null
 
+        const products: Product[] = rows.map((product: ProductType)=> {
+            const newProduct = new Product(
+                product.product_id,
+                product.name,
+                product.quantity,
+                product.price,
+                product.unit,
+                product.description,
+                product.category_id
+            )
 
-           const products: Product[] = rows.map((product: ProductType)=> {
-                const newProduct = new Product(
-                    product.product_id,
-                    product.name,
-                    product.quantity,
-                    product.price,
-                    product.unit,
-                    product.description,
-                    product.category_id
-                )
-
-                if (product.image) newProduct.setImageArray([product.image])
-                
-                return newProduct
+            if (product.image) newProduct.setImageArray([product.image])
+            
+            return newProduct
            })
 
         return {

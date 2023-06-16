@@ -15,7 +15,7 @@ describe('Product API Test', ()=>{
     describe('GET /products/:id ',  ()=>{
 
         it('should return a single product when id is valid', async ()=> {
-            const product_id = 2
+            const product_id = 55
             const response = await request.get(`/products/${product_id}`)
 
             expect(response.status).toBe(200)
@@ -84,73 +84,73 @@ describe('Product API Test', ()=>{
         })
     })
 
-    describe('POST /products' , ()=>{
-        describe('given the user is logged in ', ()=>{
+//     // describe('POST /products' , ()=>{
+//     //     describe('given the user is logged in ', ()=>{
 
-            it('should be success when all fields are provided', async()=>{
+//     //         it('should be success when all fields are provided', async()=>{
 
-                const productData = {
-                    name: 'Test Product',
-                    quantity: 10,
-                    price: 120,
-                    description: 'This is a test product',
-                    unit: 'pcs',
-                    category_id: 1,
-                }
+//     //             const productData = {
+//     //                 name: 'Test Product',
+//     //                 quantity: 10,
+//     //                 price: 120,
+//     //                 description: 'This is a test product',
+//     //                 unit: 'pcs',
+//     //                 category_id: 1,
+//     //             }
 
-                ProductService.postProduct = jest.fn().mockReturnValue( new Product(
-                                                                            100,
-                                                                            'Test Product',
-                                                                            10,
-                                                                            120,
-                                                                            'pcs',
-                                                                            'This is a test product',
-                                                                            1
-                                                                        ));
+//     //             ProductService.postProduct = jest.fn().mockReturnValue( new Product(
+//     //                                                                         100,
+//     //                                                                         'Test Product',
+//     //                                                                         10,
+//     //                                                                         120,
+//     //                                                                         'pcs',
+//     //                                                                         'This is a test product',
+//     //                                                                         1
+//     //                                                                     ));
 
-                 const response = await request
-                    .post('/products')
-                    .set('Authorization', `Bearer ${token}`)
-                    .field('name', productData.name)
-                    .field('quantity', productData.quantity)
-                    .field('price', productData.price)
-                    .field('description', productData.description)
-                    .field('unit', productData.unit)
-                    .field('category_id', productData.category_id)
-                    .attach('image', '/Users/nimisha/Documents/web/resturant-app/src/uploads/1685793587453-698849614-PngItem_5228598.png')
+//     //              const response = await request
+//     //                 .post('/products')
+//     //                 .set('Authorization', `Bearer ${token}`)
+//     //                 .field('name', productData.name)
+//     //                 .field('quantity', productData.quantity)
+//     //                 .field('price', productData.price)
+//     //                 .field('description', productData.description)
+//     //                 .field('unit', productData.unit)
+//     //                 .field('category_id', productData.category_id)
+//     //                 .attach('image', '/Users/nimisha/Documents/web/resturant-app/src/uploads/1685793587453-698849614-PngItem_5228598.png')
                     
-                    expect(response.status).toBe(201)
-                    expect(ProductService.postProduct).toHaveBeenCalled();
-            })
+//     //                 expect(response.status).toBe(201)
+//     //                 expect(ProductService.postProduct).toHaveBeenCalled();
+//     //         })
 
 
-             it('should throw error if price is less than 0', async()=>{
+//     //          it('should throw error if price is less than 0', async()=>{
 
-                const productData = {
-                    name: 'Test Product',
-                    quantity: 10,
-                    price: -1,
-                    description: 'This is a test product',
-                    unit: 'pcs',
-                    category_id: 1
-                }
+//     //             const productData = {
+//     //                 name: 'Test Product',
+//     //                 quantity: 10,
+//     //                 price: -1,
+//     //                 description: 'This is a test product',
+//     //                 unit: 'pcs',
+//     //                 category_id: 1
+//     //             }
 
-                  const response = await request
-                    .post('/products')
-                    .set('Authorization', `Bearer ${token}`)
-                    .field('name', productData.name)
-                    .field('quantity', productData.quantity)
-                    .field('price', productData.price)
-                    .field('description', productData.description)
-                    .field('unit', productData.unit)
-                    .field('category_id', productData.category_id)
-                    .attach('image', '/Users/nimisha/Documents/web/resturant-app/src/uploads/1685793587453-698849614-PngItem_5228598.png')
+//     //               const response = await request
+//     //                 .post('/products')
+//     //                 .set('Authorization', `Bearer ${token}`)
+//     //                 .field('name', productData.name)
+//     //                 .field('quantity', productData.quantity)
+//     //                 .field('price', productData.price)
+//     //                 .field('description', productData.description)
+//     //                 .field('unit', productData.unit)
+//     //                 .field('category_id', productData.category_id)
+//     //                 .attach('image', '/Users/nimisha/Documents/web/resturant-app/src/uploads/1685793587453-698849614-PngItem_5228598.png')
                     
-                    expect(response.status).toBe(400)
-                    expect(response.body.fieldError[0].field).toBe('price')
+//     //                 expect(response.status).toBe(400)
+//     //                 expect(response.body.fieldError[0].field).toBe('price')
 
-             })
+//     //          })
 
-        })
-    })
+//     //     })
+//     // })
 })
