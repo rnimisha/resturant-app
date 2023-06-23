@@ -54,7 +54,9 @@ class OrderController{
 
             const status = req.query.status  || 'all'
             const page = req.query.page || 0
-            const orders = await OrderService.getAllOrders(status as string, Number(page))
+            const userid = req.query.userId
+
+            const orders = await OrderService.getAllOrders(status as string, Number(page), Number(userid))
 
             if(orders === null) throw new CustomError('Order Not Found', 404)
 

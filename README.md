@@ -1,6 +1,7 @@
 # Food Ordering App API
 
 This project provides a RESTful API for managing and processing food orders Node.js, Express, and PostgreSQL.
+Frontend with the API is build in [repo here](https://github.com/rnimisha/resturant-app-client).
 
 ## Swagger Documentation
 
@@ -59,4 +60,4 @@ Run the project in development mode
 
 Access the API documentation:
 
-`http://localhost:3000/api-docs` to access the Swagger UI documentation.
+`http://localhost:3000/api-docs` to access the Swagger UI documentation.(incomplete)

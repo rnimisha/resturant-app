@@ -88,7 +88,7 @@ class OrderService{
     }
 
 
-    static getAllOrders = async(status: string, page: number): Promise<AllOrderInfo | null> =>{
+    static getAllOrders = async(status: string, page: number, user_id: number | undefined): Promise<AllOrderInfo | null> =>{
 
         let q = `SELECT *
                     FROM orders o
@@ -97,8 +97,13 @@ class OrderService{
         let data = []
      
         if(status !== 'all'){
-            q+= ' AND UPPER(order_status) = $1'
+            q+= ` AND UPPER(order_status) = $${data.length + 1}`
             data.push(status.toUpperCase())
+        }
+
+        if(user_id){
+            q+= ` AND user_id = $${data.length + 1}`
+            data.push(user_id)
         }
 
         q+= ' ORDER BY o.order_date desc'
